@@ -1,0 +1,3 @@
+- Make purple users be able to delete groccery items
+- Wrap the vote option in poll to right of text
+- Add the Iowa City Transportation API and add to overview page to see when next bus is for our classes

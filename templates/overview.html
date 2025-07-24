@@ -31,26 +31,35 @@
       <h2>Apartment Calendar</h2>
       <div id="calendar"></div>
     </section>
-  </div>
 
-  <div class="right-panel">
-    <section>
-      <h2>Today's Classes</h2>
-      <div id="schedule"></div>
-    </section>
-    <section>
+     <section class="poll-section">
+      <div class="poll-container">
       <h2>Latest Poll</h2>
       {% if latest_poll %}
-      <p>{{ latest_poll.question }}</p>
-      <ul>
+      <p class="poll-question">{{ latest_poll.question }}</p>
+      <ul class="poll-options">
         {% for opt in latest_poll.options %}
-        <li>{{ opt.option_text }} - {{ opt.votes }} votes</li>
+        <li>
+          <span class="poll-option">{{ opt.option_text }}</span>
+          <span class="poll-votes">{{ opt.votes }} votes</span>
+        </li>
         {% endfor %}
       </ul>
       {% else %}
-      <p>No polls available.</p>
+      <p class="no-poll">No polls available.</p>
       {% endif %}
+    </div>
+  </section>
+
+  </div>
+ 
+
+  <div class="right-panel">
+    <section class="schedule-section">
+      <h2>Today's Classes</h2>
+      <div id="schedule"></div>
     </section>
+    
   </div>
 </div>
 {% if role == None%}
