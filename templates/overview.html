@@ -38,6 +38,19 @@
       <h2>Today's Classes</h2>
       <div id="schedule"></div>
     </section>
+    <section class="poll-section">
+      <h2>Latest Poll</h2>
+      {% if latest_poll %}
+      <p>{{ latest_poll.question }}</p>
+      <ul>
+        {% for opt in latest_poll.options %}
+        <li>{{ opt.option_text }} - {{ opt.votes }} votes</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>No polls available.</p>
+      {% endif %}
+    </section>
   </div>
 </div>
 {% if role == None%}

@@ -16,11 +16,12 @@ body {
 .container {
   display: flex;
   flex-direction: row;
-  height: 100vh;
+  height: calc(100vh - 3rem);
   width: 100vw;
   padding: 2rem;
   box-sizing: border-box;
   gap: 2rem;
+  margin-bottom: 3rem;
 }
 
 /* Left and Right Panels */
@@ -31,6 +32,12 @@ body {
   gap: 2rem;
 }
 
+.left-panel > section,
+.right-panel > section {
+  flex: 1;
+  overflow: auto;
+}
+
 /* Panel Cards */
 section {
   background-color: #2e2e3e;
@@ -38,6 +45,11 @@ section {
   padding: 1.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   overflow: hidden;
+}
+
+.poll-section {
+  display: flex;
+  flex-direction: column;
 }
 
 /* Headings */
