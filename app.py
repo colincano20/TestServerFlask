@@ -52,6 +52,32 @@ def init_db():
                     total REAL
                     )
                     ''')
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS polls (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                question TEXT,
+                created_by TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS poll_options (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                poll_id INTEGER,
+                option_text TEXT,
+                FOREIGN KEY (poll_id) REFERENCES polls(id)
+            )
+        ''')
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS votes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                poll_id INTEGER,
+                option_id INTEGER,
+                user TEXT,
+                FOREIGN KEY (poll_id) REFERENCES polls(id),
+                FOREIGN KEY (option_id) REFERENCES poll_options(id)
+            )
+        ''')
         conn.commit()
 
 # --- AUTH HELPERS ---
@@ -381,9 +407,64 @@ def utilities():
         cur.execute('SELECT * FROM utilities')
         bills = cur.fetchall()
 
-   
+
 
     return render_template('utilities.html', bills=bills, )
+
+@app.route('/polls')
+def polls():
+    with sqlite3.connect('database.db', check_same_thread=False) as conn:
+        cur = conn.cursor()
+        cur.execute('SELECT id, question FROM polls ORDER BY created_at DESC')
+        poll_rows = cur.fetchall()
+
+        polls_data = []
+        for p in poll_rows:
+            cur.execute('SELECT id, option_text FROM poll_options WHERE poll_id=?', (p[0],))
+            options = cur.fetchall()
+            option_data = []
+            for opt in options:
+                cur.execute('SELECT COUNT(*) FROM votes WHERE option_id=?', (opt[0],))
+                count = cur.fetchone()[0]
+                option_data.append({'id': opt[0], 'text': opt[1], 'votes': count})
+            polls_data.append({'id': p[0], 'question': p[1], 'options': option_data})
+
+    can_create = 'user' in session and session.get('role') in ['admin', 'purple']
+    return render_template('polls.html', polls=polls_data, can_create=can_create)
+
+
+@app.route('/create_poll', methods=['POST'])
+def create_poll():
+    if session.get('role') not in ['admin', 'purple']:
+        return redirect('/dashboard')
+
+    question = request.form.get('question')
+    options = [request.form.get('option1'), request.form.get('option2'), request.form.get('option3'), request.form.get('option4')]
+    with sqlite3.connect('database.db', check_same_thread=False) as conn:
+        cur = conn.cursor()
+        cur.execute('INSERT INTO polls (question, created_by) VALUES (?, ?)', (question, session['user']))
+        poll_id = cur.lastrowid
+        for opt in options:
+            if opt:
+                cur.execute('INSERT INTO poll_options (poll_id, option_text) VALUES (?, ?)', (poll_id, opt))
+        conn.commit()
+    return redirect('/polls')
+
+
+@app.route('/vote', methods=['POST'])
+def vote():
+    if 'user' not in session:
+        return redirect('/login')
+
+    poll_id = request.form.get('poll_id')
+    option_id = request.form.get('option_id')
+
+    with sqlite3.connect('database.db', check_same_thread=False) as conn:
+        cur = conn.cursor()
+        cur.execute('DELETE FROM votes WHERE poll_id=? AND user=?', (poll_id, session['user']))
+        cur.execute('INSERT INTO votes (poll_id, option_id, user) VALUES (?, ?, ?)', (poll_id, option_id, session['user']))
+        conn.commit()
+    return redirect('/polls')
 
 @app.route('/overview')
 def overview():
@@ -408,8 +489,24 @@ def overview():
         }
     else:
         weather_info = None
+    # Get most recent poll
+    latest_poll = None
+    with sqlite3.connect('database.db', check_same_thread=False) as conn:
+        cur = conn.cursor()
+        cur.execute('SELECT id, question FROM polls ORDER BY created_at DESC LIMIT 1')
+        row = cur.fetchone()
+        if row:
+            poll_id, question = row
+            cur.execute('SELECT id, option_text FROM poll_options WHERE poll_id=?', (poll_id,))
+            options = cur.fetchall()
+            option_data = []
+            for opt in options:
+                cur.execute('SELECT COUNT(*) FROM votes WHERE option_id=?', (opt[0],))
+                count = cur.fetchone()[0]
+                option_data.append({'option_text': opt[1], 'votes': count})
+            latest_poll = {'question': question, 'options': option_data}
 
-    return render_template('overview.html', weather=weather_info, role=role)
+    return render_template('overview.html', weather=weather_info, role=role, latest_poll=latest_poll)
 
 
 
