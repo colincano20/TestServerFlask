@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
+from datetime import date, datetime,timedelta
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
@@ -77,7 +79,16 @@ def init_db():
                 FOREIGN KEY (poll_id) REFERENCES polls(id),
                 FOREIGN KEY (option_id) REFERENCES poll_options(id)
             )
+            
         ''')
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS bus (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                day TEXT,
+                time TEXT            
+                    )
+        ''')
+        
         conn.commit()
 
 # --- AUTH HELPERS ---
@@ -505,8 +516,31 @@ def overview():
                 count = cur.fetchone()[0]
                 option_data.append({'option_text': opt[1], 'votes': count})
             latest_poll = {'question': question, 'options': option_data}
+    now = datetime.now()
+    
+    today = date.today()
+    current_day = today.weekday()
+    if current_day < 5:
+        day = 'Weekday'
+    elif current_day == 5:
+        day = 'Saturday'
+    else:
+        day = 'Sunday'
+          
+    current_time = now.strftime('%H:%M')  # e.g., '15:45'
+    
 
-    return render_template('overview.html', weather=weather_info, role=role, latest_poll=latest_poll)
+    with sqlite3.connect('database.db', check_same_thread=False) as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT * FROM bus 
+            WHERE day = ? AND time > ?
+            ORDER BY time ASC
+            LIMIT 1
+        """, (day, current_time))
+        next_bus = cur.fetchone()
+
+    return render_template('overview.html', weather=weather_info, role=role, latest_poll=latest_poll, next_bus=next_bus)
 
 
 
@@ -517,3 +551,4 @@ if __name__ == '__main__':
     if not get_user('admin'):
         add_user('admin', 'adminpass', 'admin')
     app.run(host='0.0.0.0', port=5000, debug=True)
+
