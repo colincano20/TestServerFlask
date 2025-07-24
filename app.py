@@ -15,7 +15,7 @@ def init_db():
                 id INTEGER PRIMARY KEY,
                 username TEXT UNIQUE,
                 password TEXT,
-                role TEXT
+                role TEXT, email TEXT
             )
         ''')
         cur.execute('''
