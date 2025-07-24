@@ -11,6 +11,8 @@ This project provides a small dashboard for managing apartment tasks using Flask
 
 A small SQLite database (`database.db`) stores user accounts, events, schedules, grocery items, and utility bills.
 
+All passwords are hashed using Werkzeug's `pbkdf2:sha256` method. If you are upgrading from an older version that used scrypt, delete `database.db` or reset each account password so it is stored with the new algorithm.
+
 ## Getting Started
 
 1. Create a virtual environment (optional but recommended):
@@ -29,6 +31,10 @@ A small SQLite database (`database.db`) stores user accounts, events, schedules,
    The app will initialize the database on first run and start listening on `http://localhost:5000/`.
 
 An admin account is created automatically with username `admin` and password `adminpass`.
+
+## Password Hashing
+
+User passwords are stored using Werkzeug's `pbkdf2:sha256` hash. If you migrate from a version that used a different scheme, remove the existing `database.db` file or manually reset each user's password after upgrading so the new hash method is applied.
 
 ## Configuration
 

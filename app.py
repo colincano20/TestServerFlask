@@ -62,7 +62,7 @@ def get_user(username):
         return cur.fetchone()
 
 def add_user(username, password, role):
-    hashed = generate_password_hash(password)
+    hashed = generate_password_hash(password, method="pbkdf2:sha256")
     with sqlite3.connect('database.db', check_same_thread=False) as conn:
         cur = conn.cursor()
         cur.execute('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', (username, hashed, role))
@@ -175,7 +175,7 @@ def change_password():
     new_password = request.form.get('new_password')
 
     if new_password:
-        hashed = generate_password_hash(new_password)
+        hashed = generate_password_hash(new_password, method="pbkdf2:sha256")
         with sqlite3.connect('database.db', check_same_thread=False) as conn:
             cur = conn.cursor()
             cur.execute('UPDATE users SET password = ? WHERE username = ?', (hashed, username))
