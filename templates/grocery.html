@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grocery List</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .box-grocery {
+   background: white;
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    width: 95%;
+    max-width: 500px;
+    margin-top: 40px;  /* Instead of huge margin-top: 17% */
+    text-align: center;
+}
+    </style>
+</head>
+<body>
+<div class = "box-grocery">
+    <h2>Grocery List</h2>
+    {% if can_add %}
+    <form method="POST" action="/grocery">
+            <input type="text" name="item" placeholder="Item">
+            <button type="submit">Add Item</button>
+    </form>
+    {% endif %}
+    
+    
+    <ul style="margin-top: 20px;">
+    {% for item in items %}
+        <li class="grocery-item">
+            {{ item[1] }} - Added by: {{ item[2] }}
+            {% if session['role'] == 'admin' or session['user'] == item[2] %}
+            <form method="POST" action="/delete-item" style="display:inline;">
+                <input type="hidden" name="item_id" value="{{ item[0] }}">
+                <button type="submit" class="delete-btn">X</button>
+            </form>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+
+    <a class="button" href="/dashboard">Back</a>
+</div>
+<script>
+    
+   
+</script>
+</body>
+</html>

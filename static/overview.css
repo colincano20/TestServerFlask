@@ -1,0 +1,159 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/* Base Styling */
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background-color: #1e1e2f;
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100vw;
+  padding: 2rem;
+  box-sizing: border-box;
+  gap: 2rem;
+}
+
+/* Left and Right Panels */
+.left-panel, .right-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Panel Cards */
+section {
+  background-color: #2e2e3e;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+/* Headings */
+h1 {
+  font-size: 2.4rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Weather */
+#output {
+  font-size: 1.3rem;
+}
+#output img {
+  width: 60px;
+  height: 60px;
+  vertical-align: middle;
+}
+
+/* FullCalendar (both calendars) */
+.fc {
+  background-color: #3b3b4f;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+.fc-toolbar-title {
+  font-size: 1.2rem !important;
+  color: #fff;
+}
+.fc-event {
+  background-color: #00bcd4;
+  color: #000;
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+
+/* Calendar sizes */
+#calendar {
+  height: 300px;
+}
+
+/* For Class Calendar - tighter layout */
+#schedule .fc-timegrid-slot-label {
+  font-size: 0.75rem;
+  color: #ccc;
+}
+
+/* Hide overflow if needed */
+html, body {
+  overflow: hidden;
+}
+#schedule .fc-timegrid-slot {
+  height: 25px !important;  /* Default is ~40px */
+}
+
+#schedule .fc-event {
+  font-size: 0.8rem;
+  padding: 1px 4px;
+  line-height: 1.1;
+  border-radius: 6px;
+}
+.weather-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.weather-temp {
+  font-size: 2.8rem;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.weather-condition {
+  font-size: 1.2rem;
+  color: #cccccc;
+  text-transform: capitalize;
+}
+.footer-login {
+  position: absolute;
+  bottom: 1.5rem;
+  width: 100%;
+  text-align: center;
+}
+
+.login-button {
+  display: inline-block;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 1.2rem;
+  padding: 0.33rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #45a049;
+}
+.back-button {
+  display: inline-block;
+  background-color: #4A90E2;
+  color: white;
+  font-size: 0.6rem;
+  padding: 0.162rem .75rem;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #4A90E1;
+}

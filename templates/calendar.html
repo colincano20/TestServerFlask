@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Calendar</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+  
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+</head>
+<body>
+    
+<div class="calendar-section"></div>
+  <div class="calendar-container">
+  <div class="calendar-box">
+    <h2>Apartment Calendar</h2>
+    <div id="calendar"></div>
+  </div>
+
+  {% if can_add %}
+  <div class="event-form-box">
+    <h3>Add Event</h3>
+    <form method="POST">
+      <input type="text" name="title" placeholder="Event Title" required><br><br>
+      <input type="date" name="date" required><br><br>
+      <input type="time" name="time"><br><br>
+      <button class="calendar-button" type="submit">Add Event</button>
+    </form>
+  </div>
+  {% endif %}
+</div>
+</div>
+  
+<div class="back-button-wrapper">
+  <a class="button" href="/dashboard">Back</a>
+</div>
+
+
+
+  <script src="/static/calendar.js"></script>
+</body>
+</html>

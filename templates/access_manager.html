@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Access Manager</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="box">
+        <h2>Access Manager (Admin Only)</h2>
+        <table>
+            <tr><th>Username</th><th>Role</th></tr>
+            {% for u in users %}
+            <tr><td>{{ u[0] }}</td><td>{{ u[1] }}</td></tr>
+            {% endfor %}
+        </table>
+
+        <form method="POST" action="/adduser">
+            <input type="text" name="username" placeholder="Username">
+            <input type="password" name="password" placeholder="Password">
+            <select name="role">
+                <option value="viewer">Viewer</option>
+                <option value="purple">Purple</option>
+                <option value="admin">Admin</option>
+            </select>
+            <button type="submit">Add User</button>
+        </form>
+         <form method="POST" action="/change_password">
+            <input type="text" name="username" placeholder="Username">
+            <input type="password" name="new_password" placeholder="Password">
+            <button type="submit">Change Password</button>
+        </form>
+        
+        <form method="POST" action="/deleteuser">
+            <input type="text" name="username" placeholder="Username to Delete">
+            <button type="submit">Delete User</button>
+        </form>
+
+        <form method="POST" action="/changerole">
+            <input type="text" name="username" placeholder="Username">
+            <select name="role">
+                <option value="viewer">Viewer</option>
+                <option value="purple">Purple</option>
+                <option value="admin">Admin</option>
+            </select>
+            <button type="submit">Change Role</button>
+        </form>
+        <a href="/dashboard">Back</a>
+    </div>
+   
+
+
+</body>
+</html>

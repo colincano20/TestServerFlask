@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" type="image/png" href="/static/pictures/dashboard.png" />
+</head>
+<body>
+    <div class="box">
+        <h2>Welcome, {{ user }}!</h2>
+        <p>Your role: {{ role }}</p>
+        <ul>
+            {% if role == 'admin' %}
+            <li><a class="button" href="/access">Access Manager</a></li>
+            {% endif %}
+            {% if role == 'admin' %}
+            <li><a class="button" href="/utilities">Utilities </a></li>
+            {% endif %}
+            <li><a class="button" href="/calendar">Calendar</a></li>
+            <li><a class="button" href="/schedule">Class Schedules</a></li>
+            <li><a class="button" href="/grocery">Grocery List</a></li>
+            <li><a class="button" href="/overview">Daily Overview</a></li>
+            <li><a class="button" href="/logout">Logout</a></li>
+        </ul>
+    </div>
+</body>
+</html>

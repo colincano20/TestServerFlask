@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Utility Bills</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="box">
+    <h2>Utility Bills</h2>
+
+    <!-- Add Utility Bill Form (Admin Only) -->
+    <form method="POST">
+        <label for="month">Month:</label><br>
+        <input type="month" name="month" required><br><br>
+
+        <label for="type">Utility Type:</label><br>
+        <input type="text" name="type" placeholder="e.g. Electric" required><br><br>
+
+        <label for="total">Total Amount ($):</label><br>
+        <input type="number" name="total" step="0.01" placeholder="e.g. 120.00" required><br><br>
+
+        <button type="submit">Add Bill</button>
+    </form>
+
+    <hr>
+
+    <!-- Display Utility Bills -->
+    {% if bills %}
+        <h3>Past Bills:</h3>
+        <ul>
+        {% for bill in bills %}
+            <li>
+                <strong>{{ bill[1] }} — {{ bill[2] }}</strong><br>
+                Total: ${{ '%.2f' % bill[3] }}<br>
+                Split: ${{ '%.2f' % (bill[3] / 4) }} per roommate
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No bills yet.</p>
+    {% endif %}
+
+    <br>
+    <a class="button" href="/dashboard">Back to Dashboard</a>
+</div>
+</body>
+</html>
