@@ -17,6 +17,22 @@
     border-radius: 8px;
     transition: background-color 0.2s;
 }
+#calendar .fc-timegrid-slot-label {
+  font-size: 0.15rem;
+  color: #ccc;
+}
+
+
+#calendar .fc-timegrid-slot {
+  height: 25px !important;  /* Default is ~40px */
+}
+
+#calendar .fc-event {
+  font-size: 0.75rem;
+  padding: 1px 4px;
+  line-height: 1.1;
+  border-radius: 6px;
+}
 
   </style>
 </head>
@@ -32,12 +48,17 @@
       const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'timeGridWeek',
         weekends: false,
-        contentHeight: 'auto',
-        expandRows: true,             // Allow vertical compression
+        columnHeaderFormat: { weekday: 'short' }, // Shows "Mon", "Tue", etc.
+
+        expandRows: true,    
+              // Allow vertical compression
         slotMinTime: "08:00:00", // 🕗 Start the calendar at 8:00 AM
         slotMaxTime: "22:00:00",      // End at 10 PM
         allDaySlot: false,
+        slotDuration: "01:00:00", // Optional: make slots shorter
+        headerToolbar: false,
         events: '/class_events',
+        
         eventDidMount: function(info) {
           info.el.title = `${info.event.title}\n${info.event.start.toLocaleString()}`;
         }

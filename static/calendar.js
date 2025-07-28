@@ -5,11 +5,12 @@ document.addEventListener('DOMContentLoaded', function () {
         initialView: 'dayGridMonth', // or 'dayGridWeek'
         expandRows: true, 
         eventTimeFormat: {
-        hour: 'numeric',
-        minute: '2-digit',
-        meridiem: 'short'
-      },
-
+          hour: 'numeric',
+          minute: '2-digit',
+          omitZeroMinute: true,
+          meridiem: 'narrow'
+        },
+        fixedWeekCount: false, // Allow the calendar to expand vertically
        
         events: '/events',
         
