@@ -198,10 +198,10 @@ h2 {
 }
 .footer-login {
   position: fixed;
-  bottom: 1.5rem;
-  left: 0;
+  bottom: 1rem;
+  right: 2rem;
   width: 100%;
-  text-align: center;
+  text-align: right;
 }
 
 .login-button {
@@ -209,8 +209,8 @@ h2 {
   background-color: #4CAF50;
   color: white;
   font-size: 1.2rem;
-  padding: 0.33rem 1.5rem;
-  border-radius: 8px;
+  padding: 0.41rem 1.15rem;
+  border-radius: 6px;
   text-decoration: none;
   transition: background-color 0.3s ease;
 }
@@ -222,9 +222,9 @@ h2 {
   display: inline-block;
   background-color: #4A90E2;
   color: white;
-  font-size: 0.6rem;
-  padding: 0.162rem .75rem;
-  border-radius: 4px;
+  font-size: 1.2rem;
+  padding: 0.41rem 1.15rem;
+  border-radius: 6px;
   text-decoration: none;
   transition: background-color 0.3s ease;
 }
