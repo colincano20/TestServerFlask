@@ -31,7 +31,7 @@
     {% for item in items %}
         <li class="grocery-item">
             {{ item[1] }} - Added by: {{ item[2] }}
-            {% if session['role'] == 'admin' or session['user'] == item[2] %}
+            {% if session['role'] != 'viewer'%}
             <form method="POST" action="/delete-item" style="display:inline;">
                 <input type="hidden" name="item_id" value="{{ item[0] }}">
                 <button type="submit" class="delete-btn">X</button>
