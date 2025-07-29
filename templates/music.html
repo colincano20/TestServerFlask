@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Music Player</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="box">
+    <h2>Music Player</h2>
+    {% if can_add %}
+    <form method="POST" action="/upload_music" enctype="multipart/form-data">
+        <input type="file" name="file" accept="audio/*" required>
+        <input type="text" name="title" placeholder="Title" required>
+        <button type="submit">Upload</button>
+    </form>
+    {% endif %}
+
+    <ul class="grocery-list">
+        {% for song in songs %}
+        <li>
+            {{ song[1] }}
+            <form method="POST" action="/play_music" style="display:inline;">
+                <input type="hidden" name="song_id" value="{{ song[0] }}">
+                <button type="submit">Play</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    <a class="button" href="/dashboard">Back</a>
+</div>
+</body>
+</html>

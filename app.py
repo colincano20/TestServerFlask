@@ -1,8 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 import json
 from datetime import date, datetime,timedelta
+import os
+import pygame 
+
 
 
 app = Flask(__name__)
@@ -87,6 +91,13 @@ def init_db():
                 day TEXT,
                 time TEXT            
                     )
+        ''')
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS songs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT,
+                file_path TEXT
+            )
         ''')
         
         conn.commit()
@@ -476,6 +487,56 @@ def vote():
         cur.execute('INSERT INTO votes (poll_id, option_id, user) VALUES (?, ?, ?)', (poll_id, option_id, session['user']))
         conn.commit()
     return redirect('/polls')
+
+@app.route('/music')
+def music():
+    if 'user' not in session:
+        return redirect('/login')
+    can_add = session.get('role') in ['admin', 'purple']
+    with sqlite3.connect('database.db', check_same_thread=False) as conn:
+        cur = conn.cursor()
+        cur.execute('SELECT id, title FROM songs')
+        songs = cur.fetchall()
+    return render_template('music.html', songs=songs, can_add=can_add)
+
+
+@app.route('/upload_music', methods=['POST'])
+def upload_music():
+    if session.get('role') not in ['admin', 'purple']:
+        return redirect('/dashboard')
+    file = request.files.get('file')
+    title = request.form.get('title') or (file.filename if file else '')
+    if file:
+        os.makedirs('static/music', exist_ok=True)
+        filename = secure_filename(file.filename)
+        filepath = os.path.join('static/music', filename)
+        file.save(filepath)
+        with sqlite3.connect('database.db', check_same_thread=False) as conn:
+            cur = conn.cursor()
+            cur.execute('INSERT INTO songs (title, file_path) VALUES (?, ?)', (title, filepath))
+            conn.commit()
+    return redirect('/music')
+
+
+@app.route('/play_music', methods=['POST'])
+def play_music():
+    if 'user' not in session:
+        return redirect('/login')
+    song_id = request.form.get('song_id')
+    with sqlite3.connect('database.db', check_same_thread=False) as conn:
+        cur = conn.cursor()
+        cur.execute('SELECT file_path FROM songs WHERE id=?', (song_id,))
+        row = cur.fetchone()
+    if row:
+        filepath = row[0]
+        try:
+            pygame.mixer.init()
+            pygame.mixer.music.load(filepath)
+            pygame.mixer.music.play()
+        except Exception as e:
+            print(f'Error playing music: {e}')
+    return redirect('/music')
+
 
 @app.route('/overview')
 def overview():

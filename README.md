@@ -8,6 +8,8 @@ This project provides a small dashboard for managing apartment tasks using Flask
 - **Grocery list** that residents can update.
 - **Utility bill tracker** (admin only) with email notifications via Gmail/Yagmail.
 - **Daily overview** page showing weather and today's schedule.
+- **Music player** to play uploaded songs on a connected speaker.
+
 
 A small SQLite database (`database.db`) stores user accounts, events, schedules, grocery items, and utility bills.
 
