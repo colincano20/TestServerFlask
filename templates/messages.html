@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Message Board</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='messages.css') }}">
+  <script defer src="{{ url_for('static', filename='messages.js') }}"></script>
+</head>
+<body>
+  <div class="background-glow"></div>
+
+  <div class="board-wrapper">
+    <header class="board-header">
+      <h1>Maphia Chat Room</h1>
+      
+    </header>
+
+    <section class="message-feed" id="message-feed">
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="message-chip">
+            <span class="msg-user">{{ msg[0] }}</span>
+            <span class="msg-content">{{ msg[1] }}</span>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="no-messages">Be the first to drop a message!</p>
+      {% endif %}
+    </section>
+
+    <form method="POST" class="message-form">
+      <textarea name="message" placeholder="Type a message..." required></textarea>
+      <button type="submit">Send</button>
+    </form>
+
+    <footer class="footer-nav">
+      <a href="/dashboard">Back</a>
+    </footer>
+  </div>
+  <script>
+
+</script>
+</body>
+</html>

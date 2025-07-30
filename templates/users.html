@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Users</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='messages.css') }}">
+</head>
+<body>
+  <!-- Shared background glow -->
+  <div class="background-glow"></div>
+
+  <div class="board-wrapper">
+    <!-- Page header -->
+    <header class="board-header">
+      <h1>👥 Users</h1>
+      <p>Admin-only access to view registered users</p>
+    </header>
+
+    <!-- Table Section -->
+    <section class="message-feed" style="max-height: 300px; overflow-y: auto;">
+      <h3 style="color: #00f2fe; margin-bottom: 0.5rem;">Registered Users</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="border-bottom: 1px solid #555;">
+            <th style="text-align: left; padding: 0.5rem;">Username</th>
+            <th style="text-align: left; padding: 0.5rem;">Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+          <tr>
+            <td style="padding: 0.5rem; color: #eee;">{{ u[0] }}</td>
+            <td style="padding: 0.5rem; color: #ccc;">{{ u[1] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Back Button -->
+    <footer class="footer-nav" style="margin-top: 2rem;">
+      <a href="/access">Back</a>
+    </footer>
+  </div>
+</body>
+</html>

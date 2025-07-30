@@ -99,6 +99,13 @@ def init_db():
                 file_path TEXT
             )
         ''')
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user TEXT,
+                message TEXT
+            )
+        ''')
         
         conn.commit()
 
@@ -168,6 +175,16 @@ def access_manager():
         cur.execute('SELECT username, role FROM users')
         users = cur.fetchall()
     return render_template('access_manager.html', users=users)
+@app.route('/users', methods = ['GET'])
+def users():
+    if session.get('role') != 'admin':
+        return redirect('/dashboard')
+    with sqlite3.connect('database.db', check_same_thread=False) as conn:
+        cur = conn.cursor()
+        cur.execute('SELECT username, role FROM users')
+        users = cur.fetchall()
+    return render_template('users.html', users=users)
+
 
 @app.route('/adduser', methods=['POST'])
 def add_user_route():
@@ -537,6 +554,28 @@ def play_music():
             print(f'Error playing music: {e}')
     return redirect('/music')
 
+
+
+@app.route('/messages', methods=['GET', 'POST'] )
+def messages():
+    if 'user' not in session:
+        return redirect('/login')
+
+    if request.method == 'POST':
+        message = request.form.get('message')
+        if message:
+            with sqlite3.connect('database.db', check_same_thread=False) as conn:
+                cur = conn.cursor()
+                cur.execute('INSERT INTO messages (user, message) VALUES (?, ?)', (session['user'], message))
+                conn.commit()
+            return redirect('/messages')
+
+    with sqlite3.connect('database.db', check_same_thread=False) as conn:
+        cur = conn.cursor()
+        cur.execute('SELECT user, message FROM messages ORDER BY id DESC')
+        messages = cur.fetchall()
+
+    return render_template('messages.html', messages=messages)
 
 @app.route('/overview')
 def overview():

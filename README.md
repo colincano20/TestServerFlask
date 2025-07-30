@@ -27,8 +27,9 @@ All passwords are hashed using Werkzeug's `pbkdf2:sha256` method. If you are upg
    pip install -r requirements.txt
    ```
 3. Run the server:
-   ```bash
+   ```tmux attach -t flaskserver
    python app.py
+   CTRL-B and D to end
    ```
    The app will initialize the database on first run and start listening on `http://localhost:5000/`.
 

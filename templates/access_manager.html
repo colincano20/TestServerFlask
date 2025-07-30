@@ -1,53 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Access Manager</title>
-    <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8">
+  <title>Access Manager</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='messages.css') }}">
 </head>
 <body>
-    <div class="box">
-        <h2>Access Manager (Admin Only)</h2>
-        <table>
-            <tr><th>Username</th><th>Role</th></tr>
-            {% for u in users %}
-            <tr><td>{{ u[0] }}</td><td>{{ u[1] }}</td></tr>
-            {% endfor %}
-        </table>
+  <div class="background-glow"></div>
 
-        <form method="POST" action="/adduser">
-            <input type="text" name="username" placeholder="Username">
-            <input type="password" name="password" placeholder="Password">
-            <select name="role">
-                <option value="viewer">Viewer</option>
-                <option value="purple">Purple</option>
-                <option value="admin">Admin</option>
-            </select>
-            <button type="submit">Add User</button>
-        </form>
-         <form method="POST" action="/change_password">
-            <input type="text" name="username" placeholder="Username">
-            <input type="password" name="new_password" placeholder="Password">
-            <button type="submit">Change Password</button>
-        </form>
-        
-        <form method="POST" action="/deleteuser">
-            <input type="text" name="username" placeholder="Username to Delete">
-            <button type="submit">Delete User</button>
-        </form>
+  <div class="board-wrapper">
+    <header class="board-header">
+      <h1>🛡️ Access Manager</h1>
+      
+    </header>
 
-        <form method="POST" action="/changerole">
-            <input type="text" name="username" placeholder="Username">
-            <select name="role">
-                <option value="viewer">Viewer</option>
-                <option value="purple">Purple</option>
-                <option value="admin">Admin</option>
-            </select>
-            <button type="submit">Change Role</button>
-        </form>
-        <a href="/dashboard">Back</a>
-    </div>
-   
+    <button><a href="/users" style="text-decoration: none; color:white;">View All Users</a></button>
 
 
+
+    <section class="form-section">
+
+    <!-- Add User -->
+    <form method="POST" action="/adduser" class="message-form">
+      <input type="text" name="username" placeholder="New Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <select name="role" required>
+        <option value="viewer">Viewer</option>
+        <option value="purple">Purple</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button type="submit">Add User</button>
+    </form>
+
+    <!-- Change Password -->
+    <form method="POST" action="/change_password" class="message-form">
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="new_password" placeholder="New Password" required>
+      <button type="submit">Change Password</button>
+    </form>
+
+    <!-- Delete User -->
+    <form method="POST" action="/deleteuser" class="message-form">
+      <input type="text" name="username" placeholder="Username to Delete" required>
+      <button type="submit">Delete User</button>
+    </form>
+
+    <!-- Change Role -->
+    <form method="POST" action="/changerole" class="message-form">
+    
+      <input type="text" name="username" placeholder="Username" required>
+      <select name="role" required>
+        <option value="viewer">Viewer</option>
+        <option value="purple">Purple</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button type="submit">Change Role</button>
+    </form>
+    </section>
+    
+    <footer class="footer-nav">
+      <a href="/dashboard">Back</a>
+    </footer>
+  </div>
 </body>
 </html>
