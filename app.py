@@ -509,7 +509,7 @@ def upload_music():
     if file:
         os.makedirs('static/music', exist_ok=True)
         filename = secure_filename(file.filename)
-        filepath = os.path.join('static/music', filename)
+        filepath = os.path.join('static', 'music', filename)
         file.save(filepath)
         with sqlite3.connect('database.db', check_same_thread=False) as conn:
             cur = conn.cursor()
