@@ -2,7 +2,9 @@ Need:
 - Make api keys secure
 - Finish applying new CSS structures
 - Add timestamps to MessageBoard
-
+- Come up with solution for Weather API's limit
+- Test tablet functionality
+- Look into ways for TV dashboard.
 
 done:
 - Make purple users be able to delete groccery items
