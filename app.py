@@ -424,7 +424,7 @@ def utilities():
         yag = yagmail.SMTP("maphia.server@gmail.com", "fvxo qgaq kusy fspl")
 
         for username, email in users:
-            share = round(total / len(users), 2)
+            share = round(total / 4, 2)
             subject = f"⚡ {utype} Bill – {month}"
             body = f"""
         Hey {username},
