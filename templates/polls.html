@@ -1,45 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Polls</title>
-    <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8">
+  <title>Polls</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='polls.css') }}">
 </head>
 <body>
-<div class="box">
-    <h2>Polls</h2>
+  <div class="background-glow"></div>
+
+  <!-- Fixed Header -->
+  <div class="polls-header">
+    <h1>📊 Polls</h1>
+    <p>Vote and create polls</p>
+  </div>
+
+  <!-- Scrollable Content -->
+  <div class="polls-scroll">
     {% for poll in polls %}
-        <div class="poll-item" style="margin-bottom:20px;">
-            <h3>{{ poll.question }}</h3>
-            <form method="POST" action="/vote">
-                <input type="hidden" name="poll_id" value="{{ poll.id }}">
-                {% for opt in poll.options %}
-                    <div>
-                        <input type="radio" name="option_id" value="{{ opt.id }}" required>
-                        {{ opt.text }} - {{ opt.votes }} votes
-                    </div>
-                {% endfor %}
-                {% if session.get('user') %}
-                    <button type="submit">Vote</button>
-                {% else %}
-                    <a href="/login">Login to vote</a>
-                {% endif %}
-            </form>
+    <div class="poll-card">
+      <h3>{{ poll.question }}</h3>
+      <form method="POST" action="/vote">
+        <input type="hidden" name="poll_id" value="{{ poll.id }}">
+        <div class="poll-options">
+          {% for opt in poll.options %}
+          <label class="poll-option">
+            <input type="radio" name="option_id" value="{{ opt.id }}" required>
+            <span>{{ opt.text }}</span>
+            <span class="vote-count">({{ opt.votes }} votes)</span>
+          </label>
+          {% endfor %}
         </div>
+        {% if session.get('user') %}
+        <button class="vote-btn" type="submit">Vote</button>
+        {% else %}
+        <a class="login-to-vote" href="/login">Login to vote</a>
+        {% endif %}
+      </form>
+    </div>
     {% endfor %}
 
     {% if can_create %}
-    <h3>Create Poll</h3>
-    <form method="POST" action="/create_poll">
-        <input type="text" name="question" placeholder="Question" required>
+    <div class="form-card">
+      <h3 class="sticky-label"> &nbsp;&nbsp;Create a Poll</h3>
+      <form method="POST" action="/create_poll" class="poll-form">
+        <input type="text" name="question" placeholder="Poll Question" required>
         <input type="text" name="option1" placeholder="Option 1" required>
         <input type="text" name="option2" placeholder="Option 2" required>
         <input type="text" name="option3" placeholder="Option 3">
         <input type="text" name="option4" placeholder="Option 4">
-        <button type="submit">Create</button>
-    </form>
+        <button type="submit">Create Poll</button>
+      </form>
+    </div>
     {% endif %}
-
-    <a class="button" href="/dashboard">Back</a>
-</div>
+  </div>
+  <a class="back-btn" href="/dashboard">Back</a>
 </body>
+
 </html>
