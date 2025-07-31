@@ -5,6 +5,9 @@ Need:
 - Come up with solution for Weather API's limit
 - Test tablet functionality
 - Look into ways for TV dashboard.
+- Look into best way to have music on the player.
+- Added functionality to music player(stop,play, pause, skip etc)
+- Timed functionality.
 
 done:
 - Make purple users be able to delete groccery items
