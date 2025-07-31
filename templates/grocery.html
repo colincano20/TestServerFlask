@@ -1,51 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Grocery List</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <style>
-        .box-grocery {
-   background: white;
-    padding: 30px 40px;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    width: 95%;
-    max-width: 500px;
-    margin-top: 40px;  /* Instead of huge margin-top: 17% */
-    text-align: center;
-}
-    </style>
+  <meta charset="UTF-8" />
+  <title>Grocery List</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='grocery.css') }}">
+  <style>
+    
+
+    
+  </style>
 </head>
 <body>
-<div class = "box-grocery">
-    <h2>Grocery List</h2>
+  <div class="background-glow"></div>
+  <div class="board-wrapper">
+    <header class="board-header">
+      <h1>🛒 Grocery List</h1>
+    </header>
+
+    <section class="message-feed" id="message-feed">
+      {% for item in items %}
+        <div class="grocery-entry">
+          <div>
+            <span class="grocery-user">{{ item[2] }}</span>
+            <span class="grocery-text">: {{ item[1] }}</span>
+          </div>
+          {% if session['role'] != 'viewer' %}
+          <form method="POST" action="/delete-item">
+            <input type="hidden" name="item_id" value="{{ item[0] }}">
+            <button type="submit" class="delete-btn">×</button>
+          </form>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </section>
+
     {% if can_add %}
-    <form method="POST" action="/grocery">
-            <input type="text" name="item" placeholder="Item">
-            <button type="submit">Add Item</button>
+    <form method="POST" action="/grocery" class="grocery-form">
+      <input type="text" name="item" placeholder="Item" required>
+      <button type="submit">Add Item</button>
     </form>
     {% endif %}
-    
-    
-    <ul style="margin-top: 20px;">
-    {% for item in items %}
-        <li class="grocery-item">
-            {{ item[1] }} - Added by: {{ item[2] }}
-            {% if session['role'] != 'viewer'%}
-            <form method="POST" action="/delete-item" style="display:inline;">
-                <input type="hidden" name="item_id" value="{{ item[0] }}">
-                <button type="submit" class="delete-btn">X</button>
-            </form>
-            {% endif %}
-        </li>
-    {% endfor %}
-</ul>
 
-    <a class="button" href="/dashboard">Back</a>
-</div>
-<script>
-    
-   
-</script>
+    <footer class="footer-nav">
+      <a href="/dashboard">Back</a>
+    </footer>
+  </div>
 </body>
 </html>
