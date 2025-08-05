@@ -3,11 +3,9 @@ import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import json
-from datetime import date, datetime, timedelta
+from datetime import date, datetime,timedelta
 import os
-import pygame
-import requests
-import base64
+import pygame 
 
 
 
@@ -511,7 +509,12 @@ def vote():
 def music():
     if 'user' not in session:
         return redirect('/login')
-    return render_template('music.html')
+    can_add = session.get('role') in ['admin', 'purple']
+    with sqlite3.connect('database.db', check_same_thread=False) as conn:
+        cur = conn.cursor()
+        cur.execute('SELECT id, title FROM songs')
+        songs = cur.fetchall()
+    return render_template('music.html', songs=songs, can_add=can_add)
 
 
 @app.route('/upload_music', methods=['POST'])
@@ -550,116 +553,6 @@ def play_music():
         except Exception as e:
             print(f'Error playing music: {e}')
     return redirect('/music')
-
-
-# --- SPOTIFY INTEGRATION ---
-def get_spotify_token():
-    """Fetch a fresh Spotify access token using a refresh token."""
-    client_id = os.environ.get('SPOTIFY_CLIENT_ID')
-    client_secret = os.environ.get('SPOTIFY_CLIENT_SECRET')
-    refresh_token = os.environ.get('SPOTIFY_REFRESH_TOKEN')
-    if not all([client_id, client_secret, refresh_token]):
-        return None
-    auth_str = f"{client_id}:{client_secret}"
-    b64_auth = base64.b64encode(auth_str.encode()).decode()
-    response = requests.post(
-        'https://accounts.spotify.com/api/token',
-        data={'grant_type': 'refresh_token', 'refresh_token': refresh_token},
-        headers={'Authorization': f'Basic {b64_auth}'},
-        timeout=10,
-    )
-    if response.status_code != 200:
-        return None
-    return response.json().get('access_token')
-
-
-@app.route('/spotify_search')
-def spotify_search():
-    if 'user' not in session:
-        return redirect('/login')
-    query = request.args.get('q', '')
-    token = get_spotify_token()
-    if not token or not query:
-        return {'tracks': []}
-    response = requests.get(
-        'https://api.spotify.com/v1/search',
-        params={'q': query, 'type': 'track', 'limit': 10},
-        headers={'Authorization': f'Bearer {token}'},
-        timeout=10,
-    )
-    data = response.json()
-    tracks = []
-    for item in data.get('tracks', {}).get('items', []):
-        tracks.append({
-            'name': item['name'],
-            'artist': item['artists'][0]['name'],
-            'uri': item['uri'],
-        })
-    return {'tracks': tracks}
-
-
-@app.route('/spotify_play', methods=['POST'])
-def spotify_play():
-    if 'user' not in session:
-        return redirect('/login')
-    data = request.get_json(silent=True) or {}
-    uri = data.get('uri')
-    token = get_spotify_token()
-    if not token or not uri:
-        return ('', 400)
-    device_id = os.environ.get('SPOTIFY_DEVICE_ID')
-    params = {'device_id': device_id} if device_id else None
-    requests.put(
-        'https://api.spotify.com/v1/me/player/play',
-        params=params,
-        json={'uris': [uri]},
-        headers={'Authorization': f'Bearer {token}'},
-        timeout=10,
-    )
-    return ('', 204)
-
-
-@app.route('/spotify_queue', methods=['POST'])
-def spotify_queue():
-    if 'user' not in session:
-        return redirect('/login')
-    data = request.get_json(silent=True) or {}
-    uri = data.get('uri')
-    token = get_spotify_token()
-    if not token or not uri:
-        return ('', 400)
-    requests.post(
-        'https://api.spotify.com/v1/me/player/queue',
-        params={'uri': uri},
-        headers={'Authorization': f'Bearer {token}'},
-        timeout=10,
-    )
-    return ('', 204)
-
-
-@app.route('/spotify_control', methods=['POST'])
-def spotify_control():
-    if 'user' not in session:
-        return redirect('/login')
-    data = request.get_json(silent=True) or {}
-    action = data.get('action')
-    token = get_spotify_token()
-    if not token or not action:
-        return ('', 400)
-    headers = {'Authorization': f'Bearer {token}'}
-    device_id = os.environ.get('SPOTIFY_DEVICE_ID')
-    params = {'device_id': device_id} if device_id else None
-    if action == 'pause':
-        requests.put('https://api.spotify.com/v1/me/player/pause', params=params, headers=headers, timeout=10)
-    elif action == 'play':
-        requests.put('https://api.spotify.com/v1/me/player/play', params=params, headers=headers, timeout=10)
-    elif action == 'next':
-        requests.post('https://api.spotify.com/v1/me/player/next', params=params, headers=headers, timeout=10)
-    elif action == 'previous':
-        requests.post('https://api.spotify.com/v1/me/player/previous', params=params, headers=headers, timeout=10)
-    else:
-        return ('', 400)
-    return ('', 204)
 
 
 
@@ -758,4 +651,3 @@ if __name__ == '__main__':
     if not get_user('admin'):
         add_user('admin', 'adminpass', 'admin')
     app.run(host='0.0.0.0', port=5000, debug=True)
-
