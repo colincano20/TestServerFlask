@@ -32,6 +32,7 @@ All passwords are hashed using Werkzeug's `pbkdf2:sha256` method. If you are upg
    CTRL-B and D to end
    ```
    The app will initialize the database on first run and start listening on `http://localhost:5000/`.
+git clone https://github.com/YOUR-USERNAME/YOUR-REPO.git ~/TestServerFlask
 
 An admin account is created automatically with username `admin` and password `adminpass`.
 

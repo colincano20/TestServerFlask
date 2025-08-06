@@ -639,8 +639,10 @@ def overview():
             LIMIT 1
         """, (day, current_time))
         next_bus = cur.fetchone()
+        object = datetime.strptime(next_bus[2], "%H:%M")
+        current_twelve = object.strftime("%#I:%M %p")
 
-    return render_template('overview.html', weather=weather_info, role=role, latest_poll=latest_poll, next_bus=next_bus)
+    return render_template('overview.html', weather=weather_info, role=role, latest_poll=latest_poll, next_bus=current_twelve)
 
 
 

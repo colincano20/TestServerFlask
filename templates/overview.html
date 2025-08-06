@@ -64,10 +64,12 @@
       <div class = "bus-container">
       <h3>Next Bus</h3>
         {% if next_bus %}
-          <p><strong>Time:</strong> {{ next_bus[2] }}</p>
+          <p><strong>Time:</strong> {{ next_bus }}</p>
         {% else %}
           <p>No more buses today.</p>
         {% endif %}
+
+        
         </div>
     </section>
     
