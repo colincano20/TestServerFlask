@@ -6,7 +6,8 @@ import json
 from datetime import date, datetime,timedelta
 import os
 import pygame 
-
+from kasa import SmartBulb
+import asyncio
 
 
 app = Flask(__name__)
@@ -645,6 +646,29 @@ def overview():
     return render_template('overview.html', weather=weather_info, role=role, latest_poll=latest_poll, next_bus=current_twelve)
 
 
+BULB_IP = "192.168.1.193"   # First bulb's IP
+BULB_IP2 = "192.168.1.194"  # Second bulb's IP
+
+async def control_bulbs(turn_on: bool):
+    bulb1 = SmartBulb(BULB_IP)
+    bulb2 = SmartBulb(BULB_IP2)
+    
+    await asyncio.gather(bulb1.update(), bulb2.update())
+    
+    if turn_on:
+        await asyncio.gather(bulb1.turn_on(), bulb2.turn_on())
+    else:
+        await asyncio.gather(bulb1.turn_off(), bulb2.turn_off())
+
+@app.route('/lights/on')
+def lights_on():
+    asyncio.run(control_bulbs(True))
+    return redirect(url_for('music'))
+
+@app.route('/lights/off')
+def lights_off():
+    asyncio.run(control_bulbs(False))
+    return redirect(url_for('music'))
 
 # --- INIT ---
 if __name__ == '__main__':
