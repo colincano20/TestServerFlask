@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session,jsonify
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -8,7 +8,7 @@ import os
 import pygame 
 from kasa import SmartBulb
 import asyncio
-
+import colorsys
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
@@ -646,29 +646,59 @@ def overview():
     return render_template('overview.html', weather=weather_info, role=role, latest_poll=latest_poll, next_bus=current_twelve)
 
 
-BULB_IP = "192.168.1.193"   # First bulb's IP
-BULB_IP2 = "192.168.1.194"  # Second bulb's IP
+# Bulb IPs
+BULB_IPS = ["192.168.1.193", "192.168.1.194"]
 
-async def control_bulbs(turn_on: bool):
-    bulb1 = SmartBulb(BULB_IP)
-    bulb2 = SmartBulb(BULB_IP2)
-    
-    await asyncio.gather(bulb1.update(), bulb2.update())
-    
-    if turn_on:
-        await asyncio.gather(bulb1.turn_on(), bulb2.turn_on())
-    else:
-        await asyncio.gather(bulb1.turn_off(), bulb2.turn_off())
+async def apply_to_all(action):
+    bulbs = [SmartBulb(ip) for ip in BULB_IPS]
+    await asyncio.gather(*(bulb.update() for bulb in bulbs))
+    await asyncio.gather(*(action(bulb) for bulb in bulbs))
 
-@app.route('/lights/on')
+@app.route("/lights")
+def lights():
+    return render_template("lights.html")
+
+@app.route("/lights/on")
 def lights_on():
-    asyncio.run(control_bulbs(True))
-    return redirect(url_for('music'))
+    asyncio.run(apply_to_all(lambda b: b.turn_on()))
+    return redirect(url_for('lights'))
 
-@app.route('/lights/off')
+@app.route("/lights/off")
 def lights_off():
-    asyncio.run(control_bulbs(False))
-    return redirect(url_for('music'))
+    asyncio.run(apply_to_all(lambda b: b.turn_off()))
+    return redirect(url_for('lights'))
+
+@app.route("/lights/brightness/<int:level>")
+def lights_brightness(level):
+    asyncio.run(apply_to_all(lambda b: b.set_brightness(level)))
+    return ("", 204)  # No content for AJAX
+
+@app.route("/lights/color/<hex_color>")
+def lights_color(hex_color):
+    # Convert hex (e.g., "ff0000") to HSV
+    r = int(hex_color[0:2], 16) / 255
+    g = int(hex_color[2:4], 16) / 255
+    b = int(hex_color[4:6], 16) / 255
+    h, s, v = colorsys.rgb_to_hsv(r, g, b)
+    hue = int(h * 360)        # 0–360
+    sat = int(s * 100)        # 0–100
+
+    async def set_color(bulb):
+        await bulb.set_hsv(hue, sat, bulb.brightness)
+
+    asyncio.run(apply_to_all(set_color))
+    return ("", 204)
+
+@app.route("/lights/hue/<int:hue>")
+def lights_hue(hue):
+    asyncio.run(apply_to_all(lambda b: b.set_hsv(hue, 100, b.brightness)))
+    return ("", 204)
+
+@app.route("/lights/saturation/<int:sat>")
+def lights_saturation(sat):
+    asyncio.run(apply_to_all(lambda b: b.set_hsv(b.hue, sat, b.brightness)))
+    return ("", 204)
+
 
 # --- INIT ---
 if __name__ == '__main__':

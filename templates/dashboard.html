@@ -20,7 +20,10 @@
             <li><a class="button" href="/schedule">Class Schedules</a></li>
             <li><a class="button" href="/grocery">Grocery List</a></li>
             <li><a class="button" href="/polls">Polls</a></li>
+            {% if role == 'admin' %}
             <li><a class="button" href="/music">Music Player</a></li>
+            {% endif %}
+            <li><a class="button" href="/lights">Lights</a></li>
             <li><a class="button" href="/messages">Message Board</a></li>
             <li><a class="button" href="/overview">Daily Overview</a></li>
             
