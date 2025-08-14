@@ -689,16 +689,6 @@ def lights_color(hex_color):
     asyncio.run(apply_to_all(set_color))
     return ("", 204)
 
-@app.route("/lights/hue/<int:hue>")
-def lights_hue(hue):
-    asyncio.run(apply_to_all(lambda b: b.set_hsv(hue, 100, b.brightness)))
-    return ("", 204)
-
-@app.route("/lights/saturation/<int:sat>")
-def lights_saturation(sat):
-    asyncio.run(apply_to_all(lambda b: b.set_hsv(b.hue, sat, b.brightness)))
-    return ("", 204)
-
 
 # --- INIT ---
 if __name__ == '__main__':

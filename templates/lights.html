@@ -5,23 +5,30 @@
     <title>Light Control</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='lights.css') }}">
     <script>
-        async function setBrightness(value) {
-            await fetch(`/lights/brightness/${value}`);
-        }
+  const noCache = { headers: { "Cache-Control": "no-cache" } };
 
-        async function setColor(color) {
-            const hex = color.replace('#', '');
-            await fetch(`/lights/color/${hex}`);
-        }
+  function debounce(fn, ms=120) {
+    let t;
+    return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+  }
 
-        async function setHue(value) {
-            await fetch(`/lights/hue/${value}`);
-        }
+  const setBrightness = debounce(async (value) => {
+    try { await fetch(`/lights/brightness/${value}`, noCache); } catch {}
+  });
 
-        async function setSaturation(value) {
-            await fetch(`/lights/saturation/${value}`);
-        }
-    </script>
+  async function setColor(color) {
+    try { await fetch(`/lights/color/${color.replace('#','')}`, noCache); } catch {}
+  }
+
+  const setHue = debounce(async (value) => {
+    try { await fetch(`/lights/hue/${value}`, noCache); } catch {}
+  });
+
+  const setSaturation = debounce(async (value) => {
+    try { await fetch(`/lights/saturation/${value}`, noCache); } catch {}
+  });
+</script>
+
 </head>
 <body>
     <div class="background-glow">
@@ -44,20 +51,10 @@
             <input type="color" value="#ffffff" oninput="setColor(this.value)">
         </div>
 
-        <div class="control">
-            <label>Hue: <span id="hue-value">180</span>°</label>
-            <input type="range" min="0" max="360" value="180"
-                   oninput="document.getElementById('hue-value').innerText=this.value; setHue(this.value)">
-        </div>
-
-        <div class="control">
-            <label>Saturation: <span id="sat-value">100</span>%</label>
-            <input type="range" min="0" max="100" value="100"
-                   oninput="document.getElementById('sat-value').innerText=this.value; setSaturation(this.value)">
-        </div>
+        
 
         <div class="footer">
-            <a href="/dashboard" class="btn back">⬅ Back to Dashboard</a>
+            <a href="/dashboard" class="btn back">Back</a>
         </div>
     </div>
     </div>
